@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 
 import {
   View,
@@ -10,7 +11,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import CategoriesScreen from './screens/CategoriesScreen';
+import ClothingCareDetails from './screens/ClothingCareDetails';
+
 export default function App() {
+
+  const [currentScreen, setCurrentScreen] = useState('Home');
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const categories = [
     { id: 1, name: 'Cotton', emoji: '👕' },
@@ -21,6 +28,44 @@ export default function App() {
     { id: 6, name: 'Polyester', emoji: '🧥' },
   ];
 
+  // Display Clothing Care Details Screen
+  if (currentScreen === 'Details') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar
+          backgroundColor="#F7F8F2"
+          barStyle="dark-content"
+        />
+
+        <ClothingCareDetails
+          category={selectedCategory}
+          onBack={() => setCurrentScreen('Categories')}
+        />
+      </SafeAreaView>
+    );
+  }
+
+  // Display Categories Screen
+  if (currentScreen === 'Categories') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar
+          backgroundColor="#F7F8F2"
+          barStyle="dark-content"
+        />
+
+        <CategoriesScreen
+          onBack={() => setCurrentScreen('Home')}
+          onSelectCategory={(item) => {
+            setSelectedCategory(item);
+            setCurrentScreen('Details');
+          }}
+        />
+      </SafeAreaView>
+    );
+  }
+
+  // Display Home Screen
   return (
     <SafeAreaView style={styles.container}>
 
@@ -72,13 +117,23 @@ export default function App() {
         {/* Categories */}
         <View style={styles.categorySection}>
 
-          <Text style={styles.sectionTitle}>
-            Explore Clothing Types
-          </Text>
+          <View style={styles.categoryHeading}>
+            <View>
+              <Text style={styles.sectionTitle}>
+                Explore Clothing Types
+              </Text>
 
-          <Text style={styles.sectionDescription}>
-            Choose a fabric to discover its care guide.
-          </Text>
+              <Text style={styles.sectionDescription}>
+                Choose a fabric to discover its care guide.
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => setCurrentScreen('Categories')}
+            >
+              <Text style={styles.viewAll}>View All ›</Text>
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.categoryGrid}>
 
@@ -87,9 +142,7 @@ export default function App() {
               <TouchableOpacity
                 key={item.id}
                 style={styles.categoryCard}
-                onPress={() =>
-                  alert(item.name + ' care guide coming soon!')
-                }
+                onPress={() => setCurrentScreen('Categories')}
               >
 
                 <Text style={styles.categoryEmoji}>
@@ -206,6 +259,12 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
 
+  categoryHeading: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
   sectionTitle: {
     fontSize: 21,
     fontWeight: 'bold',
@@ -217,6 +276,12 @@ const styles = StyleSheet.create({
     color: '#788579',
     marginTop: 7,
     marginBottom: 18,
+  },
+
+  viewAll: {
+    color: '#315B43',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 
   categoryGrid: {
