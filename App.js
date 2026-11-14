@@ -13,11 +13,14 @@ import {
 
 import CategoriesScreen from './screens/CategoriesScreen';
 import ClothingCareDetails from './screens/ClothingCareDetails';
+import LaundrySymbolsScreen from './screens/LaundrySymbolsScreen';
+import SearchScreen from './screens/SearchScreen';
 
 export default function App() {
 
   const [currentScreen, setCurrentScreen] = useState('Home');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [previousScreen, setPreviousScreen] = useState('Categories');
 
   const categories = [
     { id: 1, name: 'Cotton', emoji: '👕' },
@@ -27,6 +30,43 @@ export default function App() {
     { id: 5, name: 'Linen', emoji: '👔' },
     { id: 6, name: 'Polyester', emoji: '🧥' },
   ];
+
+  // Display Laundry Symbols Guide Screen
+  if (currentScreen === 'LaundrySymbols') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar
+          backgroundColor="#F7F8F2"
+          barStyle="dark-content"
+        />
+
+        <LaundrySymbolsScreen
+          onBack={() => setCurrentScreen('Home')}
+        />
+      </SafeAreaView>
+    );
+  }
+
+  // Display Search & Browse Screen
+  if (currentScreen === 'Search') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar
+          backgroundColor="#F7F8F2"
+          barStyle="dark-content"
+        />
+
+        <SearchScreen
+          onBack={() => setCurrentScreen('Home')}
+          onSelectCategory={(item) => {
+            setSelectedCategory(item);
+            setPreviousScreen('Search');
+            setCurrentScreen('Details');
+          }}
+        />
+      </SafeAreaView>
+    );
+  }
 
   // Display Clothing Care Details Screen
   if (currentScreen === 'Details') {
@@ -39,7 +79,7 @@ export default function App() {
 
         <ClothingCareDetails
           category={selectedCategory}
-          onBack={() => setCurrentScreen('Categories')}
+          onBack={() => setCurrentScreen(previousScreen)}
         />
       </SafeAreaView>
     );
@@ -58,6 +98,7 @@ export default function App() {
           onBack={() => setCurrentScreen('Home')}
           onSelectCategory={(item) => {
             setSelectedCategory(item);
+            setPreviousScreen('Categories');
             setCurrentScreen('Details');
           }}
         />
@@ -158,6 +199,30 @@ export default function App() {
             ))}
 
           </View>
+        </View>
+
+        {/* Laundry Symbols Guide Button */}
+        <View style={styles.symbolsSection}>
+          <TouchableOpacity
+            style={styles.symbolsButton}
+            onPress={() => setCurrentScreen('LaundrySymbols')}
+          >
+            <Text style={styles.symbolsButtonText}>
+              🧺 Explore Laundry Symbols Guide
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Search & Browse Button */}
+        <View style={styles.searchSection}>
+          <TouchableOpacity
+            style={styles.searchButton}
+            onPress={() => setCurrentScreen('Search')}
+          >
+            <Text style={styles.searchButtonText}>
+              🔎 Search & Browse Clothing
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Bottom Message */}
@@ -310,6 +375,48 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#315B43',
+  },
+
+  // Laundry Symbols Guide Button Styles
+  symbolsSection: {
+    paddingHorizontal: 22,
+    marginTop: 10,
+  },
+
+  symbolsButton: {
+    backgroundColor: '#55745B',
+    padding: 16,
+    borderRadius: 15,
+    alignItems: 'center',
+  },
+
+  symbolsButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+
+  // Search & Browse Button Styles
+  searchSection: {
+    paddingHorizontal: 22,
+    marginTop: 12,
+  },
+
+  searchButton: {
+    backgroundColor: '#E5EBDD',
+    padding: 16,
+    borderRadius: 15,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#55745B',
+  },
+
+  searchButtonText: {
+    color: '#405943',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 
   footer: {
